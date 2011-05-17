@@ -123,8 +123,8 @@ When you print an expression in a template with `<%= ... %>`, its
 value is HTML-escaped. For example,
 
 ``` coffeescript
-    eco.render "<%= @description %>",
-      description: "<strong>HTML 5</strong> mobile app"
+eco.render "<%= @description %>",
+  description: "<strong>HTML 5</strong> mobile app"
 ```
 
 would render:
