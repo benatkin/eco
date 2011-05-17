@@ -35,14 +35,16 @@ Use `eco.render()` to render your templates. The first argument is the
 template source as a string. The second argument is the context object
 which contains your view state and any helper methods you want to call.
 
-    eco = require "eco"
-    fs  = require "fs"
+``` coffee
+eco = require "eco"
+fs  = require "fs"
 
-    template = fs.readFileSync __dirname + "/views/projects.html.eco", "utf-8"
-    console.log eco.render template, projects: [
-      { name: "Mobile app", url: "/projects/1", description: "Iteration 1" },
-      { name: "Home page redesign", url: "/projects/2" }
-    ]
+template = fs.readFileSync __dirname + "/views/projects.html.eco", "utf-8"
+console.log eco.render template, projects: [
+  { name: "Mobile app", url: "/projects/1", description: "Iteration 1" },
+  { name: "Home page redesign", url: "/projects/2" }
+]
+```
 
 Eco is fully synchronous. If your template needs to access data from
 asynchronous operations, perform those first before calling `render`.
@@ -95,8 +97,10 @@ The context object you pass to `eco.render()` becomes the value of
 easily access properties and call helper methods on the context
 object.
 
-    eco.render "<p><%= @description %></p>",
-      description: "HTML 5 mobile app"
+``` coffee
+eco.render "<p><%= @description %></p>",
+  description: "HTML 5 mobile app"
+```
 
 ## Helpers
 
@@ -104,34 +108,44 @@ Helper methods on your context object can access other properties on
 the context object in the same way they're accessed in the template:
 through `this`, or with the `@` sigil.
 
-    translations = require "translations"
+``` coffee
+translations = require "translations"
 
-    eco.render "<span><%= @translate 'common.welcomeText' %></span>",
-      language:  "en"
-      translate: (key) ->
-        translations[@language][key]
+eco.render "<span><%= @translate 'common.welcomeText' %></span>",
+  language:  "en"
+  translate: (key) ->
+    translations[@language][key]
+```
 
 ## Escaping and unescaping
 
 When you print an expression in a template with `<%= ... %>`, its
 value is HTML-escaped. For example,
 
+``` coffee
     eco.render "<%= @description %>",
       description: "<strong>HTML 5</strong> mobile app"
+```
 
 would render:
 
-    &lt;strong&gt;HTML 5&lt;/strong&gt; mobile app
+``` html
+<strong>HTML 5</strong> mobile app
+```
 
 You can use the `<%- ... %>` tag to print the value of an expression
 without escaping it. So this code:
 
-    eco.render "<%- @description %>",
-      description: "<strong>HTML 5</strong> mobile app"
+``` coffee
+eco.render "<%- @description %>",
+  description: "<strong>HTML 5</strong> mobile app"
+```
 
 would produce:
 
-    <strong>HTML 5</strong> mobile app
+``` html
+<strong>HTML 5</strong> mobile app
+```
 
 It is sometimes useful to generate markup in helper methods. The
 special `safe` method on the context object tells Eco that the string
@@ -139,16 +153,20 @@ can be printed in `<%= ... %>` tags without being escaped. You can use
 this in conjunction with the context object's `escape` method to
 selectively sanitize parts of the string. For example,
 
-    eco.render "<%= @linkTo @project %>",
-      project: { id: 4, name: "Crate & Barrel" }
-      linkTo: (project) ->
-        url  = "/projects/#{project.id}"
-        name = @escape project.name
-        @safe "<a href='#{url}'>#{name}</a>"
+``` coffee
+eco.render "<%= @linkTo @project %>",
+  project: { id: 4, name: "Crate & Barrel" }
+  linkTo: (project) ->
+    url  = "/projects/#{project.id}"
+    name = @escape project.name
+    @safe "<a href='#{url}'>#{name}</a>"
+```
 
 would render:
 
-    <a href='/projects/4'>Crate &amp; Barrel</a>
+``` html
+<a href='/projects/4'>Crate &amp; Barrel</a>
+```
 
 ## Custom escape helpers
 
@@ -156,9 +174,11 @@ By default, Eco's `escape` method takes a string and returns an
 HTML-escaped string. You can override this behavior to escape for
 formats other than HTML, or to bypass escaping entirely. For example,
 
-    eco.render "From: <%= @address %>",
-      address: "Sam Stephenson <sstephenson@gmail.com>"
-      escape:  (string) -> string
+``` coffee
+eco.render "From: <%= @address %>",
+  address: "Sam Stephenson <sstephenson@gmail.com>"
+  escape:  (string) -> string
+```
 
 would return:
 
@@ -176,32 +196,36 @@ definition. For example, rendering this template:
 
 would produce:
 
-    <div>Hello</div>
+``` html
+<div>Hello</div>
+```
 
 Captured blocks can be passed to helper methods too. In this example,
 the capture body is passed to the `formFor` helper as its last
 argument. Then the `formFor` helper calls this argument to produce a
 value.
 
-    template = """
-      <%= @formFor @project, (form) => %>
-        <label>Name:</label>
-        <%= form.textField "name" %>
-      <% end %>
-    """
+``` coffee
+template = """
+  <%= @formFor @project, (form) => %>
+    <label>Name:</label>
+    <%= form.textField "name" %>
+  <% end %>
+"""
 
-    eco.render template,
-      project: { id: 1, name: "Mobile app" }
-      formFor: (project, yield) ->
-        form =
-          textField: (attribute) =>
-            name  = @escape attribute
-            value = @escape @project[attribute]
-            @safe "<input type='text' name='#{name}' value='#{value}'>"
+eco.render template,
+  project: { id: 1, name: "Mobile app" }
+  formFor: (project, yield) ->
+    form =
+      textField: (attribute) =>
+        name  = @escape attribute
+        value = @escape @project[attribute]
+        @safe "<input type='text' name='#{name}' value='#{value}'>"
 
-        url  = "/projects/#{@project.id}"
-        body = yield form
-        @safe "<form action='#{url}' method='post'>#{body}</form>"
+    url  = "/projects/#{@project.id}"
+    body = yield form
+    @safe "<form action='#{url}' method='post'>#{body}</form>"
+```
 
 Note: In general, you should use CoffeeScript's fat arrow (`=>`) to
 define capturing functions, so that you have access to the context
