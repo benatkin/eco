@@ -35,7 +35,7 @@ Use `eco.render()` to render your templates. The first argument is the
 template source as a string. The second argument is the context object
 which contains your view state and any helper methods you want to call.
 
-``` coffee
+``` coffeescript
 eco = require "eco"
 fs  = require "fs"
 
@@ -97,7 +97,7 @@ The context object you pass to `eco.render()` becomes the value of
 easily access properties and call helper methods on the context
 object.
 
-``` coffee
+``` coffeescript
 eco.render "<p><%= @description %></p>",
   description: "HTML 5 mobile app"
 ```
@@ -108,7 +108,7 @@ Helper methods on your context object can access other properties on
 the context object in the same way they're accessed in the template:
 through `this`, or with the `@` sigil.
 
-``` coffee
+``` coffeescript
 translations = require "translations"
 
 eco.render "<span><%= @translate 'common.welcomeText' %></span>",
@@ -122,7 +122,7 @@ eco.render "<span><%= @translate 'common.welcomeText' %></span>",
 When you print an expression in a template with `<%= ... %>`, its
 value is HTML-escaped. For example,
 
-``` coffee
+``` coffeescript
     eco.render "<%= @description %>",
       description: "<strong>HTML 5</strong> mobile app"
 ```
@@ -136,7 +136,7 @@ would render:
 You can use the `<%- ... %>` tag to print the value of an expression
 without escaping it. So this code:
 
-``` coffee
+``` coffeescript
 eco.render "<%- @description %>",
   description: "<strong>HTML 5</strong> mobile app"
 ```
@@ -153,7 +153,7 @@ can be printed in `<%= ... %>` tags without being escaped. You can use
 this in conjunction with the context object's `escape` method to
 selectively sanitize parts of the string. For example,
 
-``` coffee
+``` coffeescript
 eco.render "<%= @linkTo @project %>",
   project: { id: 4, name: "Crate & Barrel" }
   linkTo: (project) ->
@@ -174,7 +174,7 @@ By default, Eco's `escape` method takes a string and returns an
 HTML-escaped string. You can override this behavior to escape for
 formats other than HTML, or to bypass escaping entirely. For example,
 
-``` coffee
+``` coffeescript
 eco.render "From: <%= @address %>",
   address: "Sam Stephenson <sstephenson@gmail.com>"
   escape:  (string) -> string
@@ -205,7 +205,7 @@ the capture body is passed to the `formFor` helper as its last
 argument. Then the `formFor` helper calls this argument to produce a
 value.
 
-``` coffee
+``` coffeescript
 template = """
   <%= @formFor @project, (form) => %>
     <label>Name:</label>
